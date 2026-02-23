@@ -3,6 +3,7 @@ package qdrant
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -48,7 +49,7 @@ func (c *Client) NewRequest(
 	ctx context.Context,
 	method string,
 	path string,
-	body http.Reader,
+	body io.Reader,
 ) (*http.Request, error) {
 
 	url := c.baseURL + path

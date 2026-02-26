@@ -6,15 +6,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
 // Snapshot represents a shard snapshot metadata
 type Snapshot struct {
-	Name         string    `json:"name"`
-	Size         uint64    `json:"size"`
-	CreationTime time.Time `json:"creation_time"`
-	Checksum     string    `json:"checksum"`
+	Name         string `json:"name"`
+	Size         uint64 `json:"size"`
+	CreationTime string `json:"creation_time"`
+	Checksum     string `json:"checksum"`
 }
 
 // SnapshotDescription represents detailed snapshot information
@@ -331,6 +330,31 @@ func (c *Client) RestoreCollectionSnapshot(ctx context.Context, collectionName s
 	return &response, nil
 }
 
+// DownloadCollectionSnapshot downloads a collection snapshot file
+// Returns the response body containing the snapshot file data
+// The caller is responsible for closing the returned reader
+func (c *Client) DownloadCollectionSnapshot(ctx context.Context, collectionName string, snapshotName string) (io.ReadCloser, error) {
+	path := fmt.Sprintf("/collections/%s/snapshots/%s", collectionName, snapshotName)
+
+	req, err := c.NewRequest(ctx, http.MethodGet, path, nil)
+	if err != nil {
+		return nil, fmt.Errorf("creating request: %w", err)
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("executing request: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		return nil, fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	return resp.Body, nil
+}
+
 // CreateSnapshotResponse represents the response from creating a snapshot
 type CreateSnapshotResponse struct {
 	Time   float64  `json:"time"`
@@ -481,6 +505,31 @@ func (c *Client) RestoreShardSnapshot(ctx context.Context, collectionName string
 	}
 
 	return &response, nil
+}
+
+// DownloadShardSnapshot downloads a shard snapshot file
+// Returns the response body containing the snapshot file data
+// The caller is responsible for closing the returned reader
+func (c *Client) DownloadShardSnapshot(ctx context.Context, collectionName string, shardID int, snapshotName string) (io.ReadCloser, error) {
+	path := fmt.Sprintf("/collections/%s/shards/%d/snapshots/%s", collectionName, shardID, snapshotName)
+
+	req, err := c.NewRequest(ctx, http.MethodGet, path, nil)
+	if err != nil {
+		return nil, fmt.Errorf("creating request: %w", err)
+	}
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("executing request: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		return nil, fmt.Errorf("unexpected status code %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	return resp.Body, nil
 }
 
 // toReader converts a byte slice to an io.Reader

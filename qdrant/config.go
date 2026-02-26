@@ -40,7 +40,7 @@ func (c *Config) getBaseURL() string {
 		scheme = "https"
 	}
 
-	return fmt.Sprintf("%s//:%s/%d", scheme, host, port)
+	return fmt.Sprintf("%s://%s:%d", scheme, host, port)
 }
 
 func (c *Config) getHTTPClient() *http.Client {

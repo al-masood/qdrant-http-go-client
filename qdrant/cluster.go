@@ -53,13 +53,13 @@ type ReplicaSet struct {
 
 // CollectionClusterInfo represents cluster information for a collection
 type CollectionClusterInfo struct {
-	ShardCount       int          `json:"shard_count"`
-	ReplicaCount     int          `json:"replica_count"`
-	PeerID           uint64       `json:"peer_id"`
-	Peers            []PeerState  `json:"peers"`
-	LocalShards      []LocalShardInfo  `json:"local_shards"`
-	RemoteShards     []RemoteShardInfo `json:"remote_shards"`
-	ShardTransfers   []ShardTransfer   `json:"shard_transfers"`
+	ShardCount       int                    `json:"shard_count"`
+	ReplicaCount     int                    `json:"replica_count"`
+	PeerID           uint64                 `json:"peer_id"`
+	Peers            map[string]PeerState   `json:"peers"`
+	LocalShards      []LocalShardInfo        `json:"local_shards"`
+	RemoteShards     []RemoteShardInfo       `json:"remote_shards"`
+	ShardTransfers   []ShardTransfer         `json:"shard_transfers"`
 }
 
 // ShardTransfer represents information about a shard transfer
@@ -74,11 +74,11 @@ type ShardTransfer struct {
 
 // ClusterInfo represents the overall cluster information
 type ClusterInfo struct {
-	PeerID           uint64      `json:"peer_id"`
-	Peers            []PeerState `json:"peers"`
-	ShardTransfers   []ShardTransfer `json:"shard_transfers"`
-	ConsensusThreadStatus string `json:"consensus_thread_status"`
-	MessageSendFailures map[string]int `json:"message_send_failures"`
+	PeerID                  uint64                   `json:"peer_id"`
+	Peers                   map[string]PeerState     `json:"peers"`
+	ShardTransfers          []ShardTransfer          `json:"shard_transfers"`
+	ConsensusThreadStatus   map[string]interface{}  `json:"consensus_thread_status"`
+	MessageSendFailures     map[string]int          `json:"message_send_failures"`
 }
 
 // GetClusterInfoResponse represents the response from getting cluster info

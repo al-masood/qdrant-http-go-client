@@ -39,7 +39,7 @@ func NewClient(config *Config) (*Client, error) {
 
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	if c.apiKey != "" {
-		req.Header.Set("apiKeyHeader", c.apiKey)
+		req.Header.Set("api-key", c.apiKey)
 	}
 
 	return c.client.Do(req)
